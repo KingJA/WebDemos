@@ -5,18 +5,85 @@ var chess = document.getElementById("chess");
 var checkerboardSize = chess.width;
 var context = chess.getContext("2d");
 /*行列数*/
-var count = 6;
+var n=5;
+var count = 5;
 var lineColor = "#a3a3a3";
 var perSize = checkerboardSize / (count + 1);
 var me = true;
 var imageUrl = "picture.jpg";
 var image = new Image();
 var history = [];
-
 var myTurn = true;
+var winCount = 0;
+/*赢法数组*/
+var win = [];
+/*我赢统计数组*/
+var myWin = [];
+/*对方赢统计数组*/
+var otherWin = [];
 
 initvailableArea();
 drawBackground();
+
+for (var i = 1; i <= count; i++) {
+    win[i] = [];
+    for (var j = 1; j <= count; j++) {
+        win[i][j] = [];
+    }
+}
+
+//竖向的赢法
+for (var i = 1; i <= count; i++) {
+    for (var j = 1; j <= count-n+1; j++) {
+        winCount++;
+        for (var k = 0; k <n; k++) {
+            win[i][j + k][winCount] = true
+            console.log("竖向的赢法["+i+"]["+(j + k)+"]["+winCount+"]");
+        }
+
+    }
+}
+//横向的赢法
+for (var i = 1; i <= count; i++) {
+    for (var j = 1; j <= count-n+1; j++) {
+        winCount++;
+        for (var k = 0; k <n; k++) {
+            win[j + k][i][winCount] = true
+            console.log("横向的赢法["+(j + k)+"]["+i+"]["+winCount+"]");
+        }
+
+    }
+}
+//右斜向的赢法
+for (var i = 1; i <= count-n+1; i++) {
+    for (var j = 1; j <= count-n+1; j++) {
+        winCount++;
+        for (var k = 0; k <n; k++) {
+            win[j + k][j + k][winCount] = true
+            console.log("右斜向的赢法["+(j + k)+"]["+j + k+"]["+winCount+"]");
+        }
+
+    }
+}
+//左斜向的赢法
+for (var i = 1; i <= count-n+1; i++) {
+    for (var j = 1; j <= count-n+1; j++) {
+        winCount++;
+        for (var k = 0; k <n; k++) {
+            win[j + k][j + k][winCount] = true
+            console.log("左斜向的赢法["+(j + k)+"]["+j + k+"]["+winCount+"]");
+        }
+
+    }
+}
+//初始化赢法统计数组
+for (var i = 1; i <= winCount; i++) {
+    myWin[i]=0;
+    otherWin[i]=0;
+}
+
+
+console.log("winCount:"+winCount);
 
 chess.onclick = function (e) {
     var x = e.offsetX;
@@ -33,14 +100,26 @@ chess.onclick = function (e) {
             return false;
         }
 
+
         console.log((me ? "黑棋: " : "白棋: ") + i + "|" + j);
         onStep(i, j, me);
         history[i][j] = me ? 1 : 2;
         me = !me;
+        for (var k=0;k<winCount;k++){
+            if (win[i][j][k]) {
+                myWin[k]++;
+                otherWin[k]=6;
+                if(myWin[k]==5) {
+                    alert("恭喜你赢了");
+                }
+            }
+        }
+
+
         myTurn = false;
         setInterval(function () {
             myTurn = true;
-        }, 3000);
+        }, 1);
     }
 }
 /**
