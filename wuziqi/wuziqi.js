@@ -14,6 +14,7 @@ var imageUrl = "picture.jpg";
 var image = new Image();
 var history = [];
 var myTurn = true;
+var isOver=false;
 var winCount = 0;
 /*赢法数组*/
 var win = [];
@@ -86,40 +87,45 @@ for (var i = 1; i <= winCount; i++) {
 console.log("winCount:"+winCount);
 
 chess.onclick = function (e) {
+    if(isOver) {
+        return;
+    }
     var x = e.offsetX;
     var y = e.offsetY;
     var i = Math.round(x / perSize);
     var j = Math.round(y / perSize);
 
     if (i == 0 || j == 0) {
-        return false;
+        return ;
     }
     if (!history[i][j]) {
         if (!myTurn) {
             console.log("等待对方落子");
-            return false;
+            return ;
         }
-
-
         console.log((me ? "黑棋: " : "白棋: ") + i + "|" + j);
         onStep(i, j, me);
         history[i][j] = me ? 1 : 2;
-        me = !me;
-        for (var k=0;k<winCount;k++){
-            if (win[i][j][k]) {
-                myWin[k]++;
-                otherWin[k]=6;
-                if(myWin[k]==5) {
-                    alert("恭喜你赢了");
+
+        if(me) {
+            for (var k=0;k<winCount;k++){
+                if (win[i][j][k]) {
+                    myWin[k]++;
+                    console.log("myWin[k]"+myWin[k]);
+                    otherWin[k]=6;
+                    if(myWin[k]==5) {
+                        alert("恭喜你赢了");
+                        isOver=true;
+                    }
                 }
             }
         }
 
-
-        myTurn = false;
-        setInterval(function () {
-            myTurn = true;
-        }, 1);
+        me = !me;
+        // myTurn = false;
+        // setInterval(function () {
+        //     myTurn = true;
+        // }, 1);
     }
 }
 /**
